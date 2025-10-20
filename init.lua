@@ -63,8 +63,35 @@ vim.api.nvim_create_autocmd('FileType', {
 -- ВНЕШНИЕ ПЛАГИНЫ
 -- ============================================================================
 -- Цветовая схема
+-- Цветовая схема с прозрачностью
 add('rebelot/kanagawa.nvim')
-vim.cmd.colorscheme('kanagawa')
+
+require('kanagawa').setup({
+  compile = false,
+  undercurl = true,
+  dimInactive = false,
+  terminalColors = true,
+  theme = "dragon",                  -- "wave" (тёмная), "dragon" (тёмная тёплая), "lotus" (светлая)
+  background = {
+    dark = "wave",
+    light = "lotus"
+  },
+})
+
+-- vim.cmd.colorscheme('kanagawa')
+
+add('folke/tokyonight.nvim')
+require('tokyonight').setup()
+
+vim.cmd.colorscheme('tokyonight')
+
+-- Дополнительная прозрачность для всех элементов
+vim.cmd([[
+  highlight Normal guibg=none
+  highlight NonText guibg=none
+  highlight NormalNC guibg=none
+  highlight NormalFloat guibg=none
+]])
 
 -- Улучшенное отображение диагностики
 add('rachartier/tiny-inline-diagnostic.nvim')

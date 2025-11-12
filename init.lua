@@ -124,10 +124,15 @@ vim.keymap.set('n', '<leader>fb', '<cmd>Pick buffers<cr>', { desc = 'Buffers' })
 vim.keymap.set('n', '<leader>fh', '<cmd>Pick help<cr>', { desc = 'Help' })
 
 -- Файловый менеджер
-require('mini.files').setup()
-vim.keymap.set('n', '<leader>e', function()
-  require('mini.files').open()
-end, { desc = 'File explorer' })
+add('stevearc/oil.nvim')
+require('oil').setup({
+  -- Рекомендуемые настройки для лучшего опыта
+  default_file_explorer = true,
+  view_options = {
+    show_hidden = true,
+  },
+})
+vim.keymap.set('n', '<leader>e', '<cmd>Oil<cr>', { desc = 'File explorer' })
 
 -- Быстрые прыжки по экрану (f/F/t/T усиления)
 require('mini.jump').setup()

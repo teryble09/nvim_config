@@ -11,7 +11,7 @@ return {
       staticcheck = true,
       gofumpt = true,
       completeUnimported = true,
-      usePlaceholders = true,
+      usePlaceholders = false,
       hints = {
         assignVariableTypes = true,
         compositeLiteralFields = true,

@@ -114,15 +114,35 @@ require('mini.icons').setup()
 require('mini.statusline').setup()
 
 -- ============================================================================
--- MINI.NVIM: НАВИГАЦИЯ
+-- НАВИГАЦИЯ
 -- ============================================================================
 -- Fuzzy finder - поиск файлов, grep, буферов, help
-require('mini.pick').setup()
-vim.keymap.set('n', '<leader>ff', '<cmd>Pick files<cr>', { desc = 'Find files' })
-vim.keymap.set('n', '<leader>fg', '<cmd>Pick grep_live<cr>', { desc = 'Live grep' })
-vim.keymap.set('n', '<leader>fb', '<cmd>Pick buffers<cr>', { desc = 'Buffers' })
-vim.keymap.set('n', '<leader>fh', '<cmd>Pick help<cr>', { desc = 'Help' })
+add('ibhagwan/fzf-lua')
+require('fzf-lua').setup({
+  winopts = {
+    height = 0.85,
+    width = 0.80,
+    row = 0.5,
+    col = 0.5,
+    border = 'rounded',
+    preview = {
+      default = 'builtin',     -- builtin | bat | cat | head
+      layout = 'flex',         -- horizontal | vertical | flex
+      flip_columns = 120,      -- при узком окне уходит вниз (vertical)
+      horizontal = 'right:60%',-- если горизонтальный — превью справа
+      -- hidden = false,      -- можно true, чтобы по умолчанию было скрыто
+    },
+  },
+})
 
+local fzf = require('fzf-lua')
+
+vim.keymap.set('n', '<leader>ff', fzf.files,      { desc = 'Find files (fzf-lua)' })
+vim.keymap.set('n', '<leader>fg', fzf.live_grep,  { desc = 'Live grep (fzf-lua)' })
+vim.keymap.set('n', '<leader>fb', fzf.buffers,    { desc = 'Buffers (fzf-lua)' })
+vim.keymap.set('n', '<leader>fh', fzf.help_tags,  { desc = 'Help (fzf-lua)' })
+
+local fzf = require('fzf-lua')
 -- Файловый менеджер
 add('stevearc/oil.nvim')
 require('oil').setup({

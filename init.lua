@@ -113,6 +113,70 @@ require('mini.icons').setup()
 -- Статусная строка внизу экрана
 require('mini.statusline').setup()
 
+-- =============================================================================
+-- TREESITTER & NAVIGATION
+-- =============================================================================
+
+-- 1. Основной Treesitter
+add({
+    source = 'nvim-treesitter/nvim-treesitter',
+    -- Обновляем парсеры после установки плагина
+    hooks = { post_checkout = function() vim.cmd('TSUpdate') end },
+})
+
+-- 2. Текстовые объекты (функции, структуры, параметры)
+add('nvim-treesitter/nvim-treesitter-textobjects')
+
+-- 3. Контекст (липкие заголовки)
+add('nvim-treesitter/nvim-treesitter-context')
+
+-- Настройка всего Treesitter блока
+require('nvim-treesitter.configs').setup({
+    -- Обязательно добавь go и gomod
+    ensure_installed = { "go", "gomod", "lua", "vim", "vimdoc", "query", "json", "yaml", "sql", "dockerfile" },
+    
+    -- Подсветка кода (лучше стандартной)
+    highlight = { enable = true },
+    
+    -- Индентация (умные отступы, работает лучше vim-овских)
+    indent = { enable = true },
+    
+    -- Настройка Textobjects
+    textobjects = {
+        select = {
+            enable = true,
+            lookahead = true, -- Автоматически прыгает к ближайшему объекту
+            keymaps = {
+                -- "Внутри" (inner) и "Вокруг" (around)
+                ["af"] = "@function.outer", -- выделить всю функцию
+                ["if"] = "@function.inner", -- выделить тело функции
+                ["ac"] = "@class.outer",    -- выделить всю структуру (struct/interface)
+                ["ic"] = "@class.inner",    -- выделить тело структуры
+                ["aa"] = "@parameter.outer", -- выделить аргумент/параметр
+                ["ia"] = "@parameter.inner",
+            },
+        },
+        move = {
+            enable = true,
+            set_jumps = true, -- Добавляет прыжки в jumplist (можно вернуться через Ctrl-o)
+            goto_next_start = {
+                ["]f"] = "@function.outer", -- след. функция
+                ["]c"] = "@class.outer",    -- след. структура
+            },
+            goto_previous_start = {
+                ["[f"] = "@function.outer", -- пред. функция
+                ["[c"] = "@class.outer",    -- пред. структура
+            },
+        },
+    },
+})
+
+-- Настройка Context (отключим для markdown, включим для кода)
+require('treesitter-context').setup({
+    enable = true,
+    max_lines = 3, -- Сколько линий контекста показывать (чтобы не пол экрана)
+})
+
 -- ============================================================================
 -- НАВИГАЦИЯ
 -- ============================================================================
@@ -142,7 +206,6 @@ vim.keymap.set('n', '<leader>fg', fzf.live_grep,  { desc = 'Live grep (fzf-lua)'
 vim.keymap.set('n', '<leader>fb', fzf.buffers,    { desc = 'Buffers (fzf-lua)' })
 vim.keymap.set('n', '<leader>fh', fzf.help_tags,  { desc = 'Help (fzf-lua)' })
 
-local fzf = require('fzf-lua')
 -- Файловый менеджер
 add('stevearc/oil.nvim')
 require('oil').setup({
@@ -168,9 +231,6 @@ require('mini.surround').setup()
 
 -- Комментирование кода - gcc, gc в visual mode
 require('mini.comment').setup()
-
--- Расширенные text objects (функции, классы, аргументы)
-require('mini.ai').setup()
 
 -- ============================================================================
 -- MINI.NVIM: АВТОДОПОЛНЕНИЕ 
@@ -282,3 +342,9 @@ vim.diagnostic.config({
 
 -- Keymaps для навигации по диагностике
 vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, { desc = 'Show diagnostic' })
+
+-- ============================================================================
+-- Для html
+-- ============================================================================
+add('windwp/nvim-ts-autotag')
+require('nvim-ts-autotag').setup()
